@@ -4,6 +4,8 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import './Landing.css';
 
+//Landing Page
+
 const NAV_LINKS = ['Features', 'How It Works', 'For Tutors', 'About'];
 
 const FEATURES = [
