@@ -1,18 +1,19 @@
-# React + Vite
+﻿# Convene
+**CONVENE PROJECT OVERVIEW**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**What is Convene?**
+Convene is a capstone project by four BSIT students from the University of Cebu – Lapu-Lapu and Mandaue. It is a web-based platform that combines Artificial Intelligence and Blockchain technology to reinvent how students discover tutors, book consultations, and retain knowledge afterward.
 
-Currently, two official plugins are available:
+**SDG Alignment**
+The project directly supports three United Nations Sustainable Development Goals. It targets SDG 4 (Quality Education) by making tutoring more accessible and effective, SDG 9 (Industry, Innovation & Infrastructure) by building a decentralized EdTech architecture, and SDG 10 (Reduced Inequalities) by addressing digital exclusion in underserved areas like Naga City, Cebu.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**The Three Core Problems**
+1. Search friction — existing platforms like Preply and Superprof rely on rigid tag-based categories, forcing students into slow, manual searching that often mismatches their actual learning needs.
+2. Learning loss — once a live session ends, students are left with raw, unstructured notes and no automated support for retention.
+3. Credential fraud — centralized databases are vulnerable to forged diplomas, fake reviews, and rating manipulation, eroding trust across the entire platform.
 
-## React Compiler
+**How Convene Solves Them**
+Each problem is addressed by a dedicated technology layer. An NLP-powered Content-Based Recommender reads tutor profile descriptions and semantically matches them to what a student types as their learning need. An AI Summarization Engine automatically generates structured post-session reports, eliminating manual note-taking. And a Blockchain Ledger permanently stores credentials, booking histories, and ratings as immutable records that cannot be tampered with.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Key Limitation to Note**
+Because it is an early-stage prototype, the blockchain integration runs on a testnet to minimize transaction costs, and the AI summarizer currently supports text or transcribed audio meaning complex equations or hand-drawn content from sessions won't be captured automatically.
