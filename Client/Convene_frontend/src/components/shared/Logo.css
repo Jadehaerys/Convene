@@ -1,0 +1,6 @@
+.logo { display: inline-flex; align-items: center; }
+.logo__img { object-fit: contain; }
+
+.logo--sm .logo__img  { height: 28px; }
+.logo--md .logo__img  { height: 36px; }
+.logo--lg .logo__img  { height: 48px; }
