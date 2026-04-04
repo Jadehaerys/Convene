@@ -7,8 +7,13 @@
   --yellow: #F59E0B;
   --yellow-light: #FBBF24;
   --yellow-dark: #D97706;
+<<<<<<< HEAD
   --yellow-glow: rgba(245, 158, 11, 0.22);
   --yellow-subtle: rgba(245, 158, 11, 0.08);
+=======
+  --yellow-glow: rgba(244, 158, 11, 0.22);
+  --yellow-subtle: rgba(244, 158, 11, 0.08);
+>>>>>>> 9c2f425cbb09125729e8d0f7fe1238a78d90ef1c
 
   /* Dark palette */
   --ink-950: #080709;
