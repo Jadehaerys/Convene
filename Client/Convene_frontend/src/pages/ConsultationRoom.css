@@ -1,0 +1,225 @@
+.consultation-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.consultation-hero,
+.consultation-panel,
+.consultation-stage {
+  background: linear-gradient(145deg, rgba(21, 18, 28, 0.82) 0%, rgba(13, 12, 17, 0.94) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-xl);
+}
+
+.consultation-hero {
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.consultation-hero h2 {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--white);
+}
+
+.consultation-hero p {
+  margin-top: 8px;
+  color: var(--ink-300);
+}
+
+.consultation-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.consultation-grid,
+.consultation-workspace {
+  display: grid;
+  gap: 20px;
+}
+
+.consultation-grid {
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+}
+
+.consultation-stage {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.consultation-stage__feed {
+  min-height: 160px;
+  padding: 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.consultation-stage__feed--primary {
+  min-height: 280px;
+  background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.14), transparent 35%), rgba(255, 255, 255, 0.04);
+}
+
+.consultation-stage__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.consultation-stage__label {
+  margin-bottom: auto;
+  color: var(--ink-400);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.consultation-stage strong,
+.consultation-panel h3 {
+  color: var(--white);
+  font-family: var(--font-display);
+}
+
+.consultation-stage span,
+.consultation-status,
+.consultation-chat__item p {
+  color: var(--ink-300);
+}
+
+.consultation-side,
+.consultation-agenda,
+.consultation-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.consultation-panel {
+  padding: 20px;
+}
+
+.consultation-panel__header,
+.consultation-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.consultation-meta-item,
+.consultation-agenda__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-200);
+  font-size: 0.83rem;
+}
+
+.consultation-workspace {
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+}
+
+.consultation-panel--notes,
+.consultation-panel--chat {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.consultation-notes {
+  min-height: 280px;
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  padding: 16px;
+  font: inherit;
+  outline: 0;
+}
+
+.consultation-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+}
+
+.consultation-chat__item {
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.consultation-chat__item strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--white);
+  font-size: 0.82rem;
+}
+
+.consultation-chat__form {
+  display: flex;
+  gap: 10px;
+}
+
+.consultation-chat__form input {
+  flex: 1;
+  min-height: 44px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  padding: 0 14px;
+  outline: 0;
+}
+
+.consultation-chat__form button {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--yellow-dark), var(--yellow));
+  color: var(--ink-950);
+}
+
+@media (max-width: 1080px) {
+  .consultation-grid,
+  .consultation-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .consultation-hero,
+  .consultation-stage__row,
+  .consultation-chat__form {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .consultation-hero__actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

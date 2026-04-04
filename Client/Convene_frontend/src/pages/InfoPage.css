@@ -1,0 +1,128 @@
+.info-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.08), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(45, 212, 191, 0.05), transparent 25%),
+    var(--ink-950);
+}
+
+.info-page__nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(20px);
+  background: rgba(8, 7, 9, 0.72);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.info-page__nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.info-page__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-200);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.info-page__main {
+  padding: 72px 0 96px;
+}
+
+.info-page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.7fr);
+  gap: 24px;
+}
+
+.info-page__content,
+.info-page__side-card {
+  padding: 28px;
+  border-radius: var(--r-2xl);
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(145deg, rgba(21, 18, 28, 0.8) 0%, rgba(13, 12, 17, 0.92) 100%);
+}
+
+.info-page__title {
+  margin-top: 18px;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.info-page__intro {
+  margin-top: 16px;
+  max-width: 760px;
+  color: var(--ink-200);
+  line-height: 1.8;
+}
+
+.info-page__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.info-page__section {
+  padding: 18px;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.info-page__section h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.info-page__section p {
+  color: var(--ink-300);
+  line-height: 1.7;
+}
+
+.info-page__side-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: fit-content;
+}
+
+.info-page__contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-200);
+  font-size: 0.84rem;
+}
+
+@media (max-width: 880px) {
+  .info-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .info-page__nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .info-page__content,
+  .info-page__side-card {
+    padding: 20px;
+  }
+}

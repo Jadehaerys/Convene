@@ -1,7 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from '../components/shared/Logo';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
+import {
+  ArrowRightIcon,
+  BotIcon,
+  CheckCircleIcon,
+  CompassIcon,
+  FileTextIcon,
+  MapPinIcon,
+  RatingStars,
+  SearchIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  StarIcon,
+} from '../components/shared/Icons';
+import { tutorCatalog } from '../data/mockData';
 import './Landing.css';
 
 const NAV_LINKS = ['Features', 'How It Works', 'For Tutors', 'About'];
@@ -96,17 +111,38 @@ const STEPS = [
 ];
 
 const TICKER_ITEMS = [
-  '✅ Verified Profiles', '🤖 NLP Matching', '📝 AI Summaries', '⭐ Trusted Ratings',
-  '🎓 Cebu Educators', '🪪 Credential Checks', '🔍 Smart Search', '📅 Live Booking',
-  '✅ Verified Profiles', '🤖 NLP Matching', '📝 AI Summaries', '⭐ Trusted Ratings',
-  '🎓 Cebu Educators', '🪪 Credential Checks', '🔍 Smart Search', '📅 Live Booking',
+  { label: 'Verified profiles', Icon: ShieldCheckIcon },
+  { label: 'NLP matching', Icon: SearchIcon },
+  { label: 'AI summaries', Icon: FileTextIcon },
+  { label: 'Trusted ratings', Icon: StarIcon },
+  { label: 'Cebu educators', Icon: CompassIcon },
+  { label: 'Credential checks', Icon: CheckCircleIcon },
+  { label: 'Smart search', Icon: SparklesIcon },
+  { label: 'Live booking', Icon: BotIcon },
 ];
 
-const TUTORS = [
-  { initials: 'MS', name: 'Maria Santos', subject: 'Mathematics', rating: 4.97, reviews: 184, tags: ['Calculus', 'Algebra', 'Stats'], verified: true },
-  { initials: 'JR', name: 'Juan Reyes', subject: 'Computer Science', rating: 4.93, reviews: 127, tags: ['Python', 'Algorithms', 'ML'], verified: true },
-  { initials: 'AL', name: 'Ana Lim', subject: 'Physics', rating: 4.89, reviews: 98, tags: ['Mechanics', 'Thermodynamics'], verified: true },
+const ABOUT_VALUES = [
+  {
+    title: 'Trust built into discovery',
+    desc: 'Verification, reviews, and fit signals appear before booking, so students can compare credible options instead of guessing.',
+  },
+  {
+    title: 'AI that reduces admin work',
+    desc: 'Search, assistant guidance, and summary generation remove routine friction and leave more time for actual teaching.',
+  },
+  {
+    title: 'Designed for Cebu learning communities',
+    desc: 'Convene is shaped around local academic needs, educator visibility, and fast coordination between students and tutors.',
+  },
 ];
+
+const ABOUT_METRICS = [
+  { value: '200+', label: 'active tutor profiles' },
+  { value: '2 min', label: 'from search to booking intent' },
+  { value: '24/7', label: 'assistant guidance availability' },
+];
+
+const TUTORS = tutorCatalog.slice(0, 3);
 
 export default function Landing({ onLogin, onSignup }) {
   const [scrolled, setScrolled] = useState(false);
@@ -148,7 +184,7 @@ export default function Landing({ onLogin, onSignup }) {
 
           <div className="landing-nav__cta">
             <Button variant="ghost" size="sm" onClick={onLogin}>Sign in</Button>
-            <Button variant="primary" size="sm" onClick={onSignup}>Get started →</Button>
+              <Button variant="primary" size="sm" onClick={onSignup} iconRight={<ArrowRightIcon size={14} />}>Get started</Button>
           </div>
         </div>
       </header>
@@ -181,8 +217,7 @@ export default function Landing({ onLogin, onSignup }) {
             </p>
 
             <div className="hero__actions" data-hero>
-              <Button variant="primary" size="lg" onClick={onSignup}
-                iconRight={<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}>
+              <Button variant="primary" size="lg" onClick={onSignup} iconRight={<ArrowRightIcon size={16} />}>
                 Start for free
               </Button>
               <Button variant="secondary" size="lg" onClick={onLogin}>
@@ -211,8 +246,11 @@ export default function Landing({ onLogin, onSignup }) {
       {/* ═════════════════════════════════ TICKER ═══ */}
       <div className="ticker">
         <div className="ticker__track">
-          {TICKER_ITEMS.map((item, i) => (
-            <span className="ticker__item" key={i}>{item}</span>
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map(({ label, Icon }, i) => (
+            <span className="ticker__item" key={`${label}-${i}`}>
+              <Icon size={14} />
+              <span>{label}</span>
+            </span>
           ))}
         </div>
       </div>
@@ -265,6 +303,41 @@ export default function Landing({ onLogin, onSignup }) {
         </div>
       </section>
 
+      <section className="about-section" id="about">
+        <div className="container about-section__grid">
+          <div className="about-section__copy">
+            <p className="section-eyebrow">Why Convene</p>
+            <h2 className="display-lg">Built for trust, speed, and better follow-through.</h2>
+            <p className="section-sub">
+              Convene is not just a directory. It is a learning workflow that helps students discover the right educator, book faster, and retain more after every consultation.
+            </p>
+
+            <div className="about-section__values">
+              {ABOUT_VALUES.map((value) => (
+                <article className="about-card" key={value.title}>
+                  <div className="about-card__icon">
+                    <CheckCircleIcon size={18} />
+                  </div>
+                  <div>
+                    <h3>{value.title}</h3>
+                    <p>{value.desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="about-section__stats">
+            {ABOUT_METRICS.map((metric) => (
+              <article className="about-stat" key={metric.label}>
+                <strong>{metric.value}</strong>
+                <span>{metric.label}</span>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════════════ TUTORS PREVIEW ═══ */}
       <section className="tutors-section" id="for-tutors">
         <div className="container">
@@ -276,12 +349,12 @@ export default function Landing({ onLogin, onSignup }) {
 
           <div className="tutors-grid">
             {TUTORS.map((t, i) => (
-              <TutorCard key={i} tutor={t} />
+              <TutorCard key={i} tutor={t} onBook={onSignup} />
             ))}
           </div>
 
           <div className="tutors-cta">
-            <Button variant="outline" size="md" onClick={onSignup}>Browse all tutors →</Button>
+            <Button variant="outline" size="md" onClick={onSignup} iconRight={<ArrowRightIcon size={15} />}>Browse all tutors</Button>
           </div>
         </div>
       </section>
@@ -312,14 +385,17 @@ export default function Landing({ onLogin, onSignup }) {
           <div className="landing-footer__brand">
             <Logo variant="dark" size="sm" />
             <p className="landing-footer__tagline">AI Education Platform</p>
-            <p className="landing-footer__loc">📍 Cebu & Naga City, Philippines</p>
+            <p className="landing-footer__loc">
+              <MapPinIcon size={14} />
+              <span>Cebu and Naga City, Philippines</span>
+            </p>
           </div>
           <div className="landing-footer__links">
-            {['Privacy Policy', 'Terms of Service', 'Contact'].map(l => (
-              <a key={l} href="#" className="landing-footer__link">{l}</a>
-            ))}
+            <Link to="/privacy" className="landing-footer__link">Privacy Policy</Link>
+            <Link to="/terms" className="landing-footer__link">Terms of Service</Link>
+            <Link to="/contact" className="landing-footer__link">Contact</Link>
           </div>
-          <p className="landing-footer__copy">© 2025 Convene. All rights reserved.</p>
+          <p className="landing-footer__copy">© 2026 Convene. All rights reserved.</p>
         </div>
       </footer>
 
@@ -330,15 +406,65 @@ export default function Landing({ onLogin, onSignup }) {
 /* ── Sub-components ── */
 
 function HeroCard({ tutors }) {
+  const featuredTutor = tutors[0];
+
   return (
     <div className="hero-card-stack">
-      
+      <div className="hero-card hero-card--main">
+        <div className="hero-card__header">
+          <div className="hero-card__avatar">
+            {featuredTutor.initials}
+            <span className="hero-card__verified">
+              <CheckCircleIcon size={11} />
+            </span>
+          </div>
+          <div>
+            <div className="hero-card__name">{featuredTutor.name}</div>
+            <div className="hero-card__subject">{featuredTutor.subject}</div>
+          </div>
+          <Badge variant="chain" size="sm">Verified</Badge>
+        </div>
 
+        <div className="hero-card__tags">
+          {featuredTutor.tags.map((tag) => (
+            <span className="hero-card__tag" key={tag}>{tag}</span>
+          ))}
+        </div>
+
+        <div className="hero-card__rating">
+          <RatingStars value={5} size={13} className="hero-card__stars" />
+          <span className="hero-card__rating-val">{featuredTutor.rating}</span>
+          <span className="hero-card__reviews">({featuredTutor.reviews} reviews)</span>
+        </div>
+      </div>
+
+      <div className="hero-card hero-card--ai">
+        <div className="hero-card__ai-icon">
+          <BotIcon size={18} />
+        </div>
+        <div>
+          <div className="hero-card__ai-label">AI fit score</div>
+          <div className="hero-card__ai-bar">
+            <div className="hero-card__ai-fill" />
+          </div>
+          <div className="hero-card__ai-score">94% match for calculus support</div>
+        </div>
+      </div>
+
+      <div className="hero-card hero-card--summary">
+        <div className="hero-card__summary-icon">
+          <FileTextIcon size={18} />
+        </div>
+        <div>
+          <div className="hero-card__summary-label">Session summary ready</div>
+          <div className="hero-card__summary-sub">Action items and key takeaways generated automatically</div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function TutorCard({ tutor }) {
+function TutorCard({ tutor, onBook }) {
   return (
     <div className="tutor-card">
       <div className="tutor-card__header">
@@ -347,7 +473,7 @@ function TutorCard({ tutor }) {
           <div className="tutor-card__name">{tutor.name}</div>
           <div className="tutor-card__subject">{tutor.subject}</div>
         </div>
-        {tutor.verified && <Badge variant="chain" size="sm">✓ Verified</Badge>}
+        {tutor.verified && <Badge variant="chain" size="sm">Verified</Badge>}
       </div>
 
       <div className="tutor-card__tags">
@@ -358,11 +484,11 @@ function TutorCard({ tutor }) {
 
       <div className="tutor-card__footer">
         <div className="tutor-card__rating">
-          <span className="tutor-card__stars">★★★★★</span>
+          <RatingStars value={5} size={13} className="tutor-card__stars" />
           <span className="tutor-card__val">{tutor.rating}</span>
           <span className="tutor-card__reviews">({tutor.reviews})</span>
         </div>
-        <Button variant="outline" size="sm">Book →</Button>
+        <Button variant="outline" size="sm" iconRight={<ArrowRightIcon size={14} />} onClick={onBook}>Book</Button>
       </div>
     </div>
   );
