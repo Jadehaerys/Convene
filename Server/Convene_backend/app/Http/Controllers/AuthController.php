@@ -40,10 +40,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->user()?->currentAccessToken()?->delete();
 
         return response()->json(['message' => 'Logout successful']);
     }
@@ -53,12 +50,14 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'role' => ['nullable', 'in:student,tutor'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
+            'role' => $validatedData['role'] ?? 'student',
             'password' => bcrypt($validatedData['password']),
         ]);
 

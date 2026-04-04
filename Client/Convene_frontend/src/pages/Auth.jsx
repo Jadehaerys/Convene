@@ -3,6 +3,8 @@ import Logo from '../components/shared/Logo';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Badge from '../components/ui/Badge';
+import { BriefcaseIcon, CheckCircleIcon, GraduationCapIcon } from '../components/shared/Icons';
+import { login, register, storeAuthSession } from '../lib/api';
 import './Auth.css';
 
 const EyeIcon = ({ open }) => open ? (
@@ -69,51 +71,30 @@ export default function Auth({ initialMode = 'login', onSuccess, onBack }) {
     setLoading(true);
     setApiError('');
 
-    const base = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
     try {
-      let token = '';
+      let responseData = null;
 
       if (mode === 'signup') {
-        const res = await fetch(`${base}/api/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            name: `${form.firstName} ${form.lastName}`.trim(),
-            email: form.email,
-            password: form.password,
-          }),
+        responseData = await register({
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          role,
+          password: form.password,
         });
-
-        const data = await res.json();
-        if (!res.ok) {
-          setApiError(data.message || 'Registration failed. Please try again.');
-          return;
-        }
-        token = data.token ?? data.access_token ?? '';
       } else {
-        const res = await fetch(`${base}/api/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ email: form.email, password: form.password }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          setApiError(data.message || 'Invalid credentials. Please try again.');
-          return;
-        }
-        token = data.token ?? data.access_token ?? '';
+        responseData = await login({ email: form.email, password: form.password });
       }
 
+      const token = responseData?.token ?? responseData?.access_token ?? '';
+
       if (token) {
-        localStorage.setItem('auth_token', token);
+        storeAuthSession(responseData);
         onSuccess?.();
       } else {
         setApiError('Authentication succeeded but no token was returned.');
       }
-    } catch {
-      setApiError('Network error — make sure the server is running.');
+    } catch (error) {
+      setApiError(error?.message || 'Network error — make sure the server is running.');
     } finally {
       setLoading(false);
     }
@@ -195,20 +176,20 @@ export default function Auth({ initialMode = 'login', onSuccess, onBack }) {
                   className={`auth__role-card ${role === 'student' ? 'auth__role-card--active' : ''}`}
                   onClick={() => handleRoleSelect('student')}
                 >
-                  <div className="auth__role-icon">🎓</div>
+                  <div className="auth__role-icon"><GraduationCapIcon size={22} /></div>
                   <div className="auth__role-title">Student</div>
                   <div className="auth__role-desc">Find verified tutors, book sessions, and get AI-powered summaries after every consultation.</div>
-                  {role === 'student' && <div className="auth__role-check">✓</div>}
+                  {role === 'student' && <div className="auth__role-check"><CheckCircleIcon size={14} /></div>}
                 </button>
 
                 <button
                   className={`auth__role-card ${role === 'tutor' ? 'auth__role-card--active' : ''}`}
                   onClick={() => handleRoleSelect('tutor')}
                 >
-                  <div className="auth__role-icon">👨‍🏫</div>
+                  <div className="auth__role-icon"><BriefcaseIcon size={22} /></div>
                   <div className="auth__role-title">Tutor / Educator</div>
                   <div className="auth__role-desc">Showcase your credentials, manage your schedule, and build a trusted reputation.</div>
-                  {role === 'tutor' && <div className="auth__role-check">✓</div>}
+                  {role === 'tutor' && <div className="auth__role-check"><CheckCircleIcon size={14} /></div>}
                 </button>
               </div>
 

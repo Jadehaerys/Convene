@@ -389,8 +389,14 @@
 }
 
 .auth__role-icon {
-  font-size: 2rem;
-  line-height: 1;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(245,158,11,0.08);
+  color: var(--yellow);
   margin-bottom: 10px;
 }
 
@@ -414,13 +420,12 @@
   top: 16px; right: 16px;
   width: 24px; height: 24px;
   border-radius: 50%;
-  background: var(--yellow);
+  background: rgba(245,158,11,0.12);
   color: var(--ink-950);
-  font-size: 0.78rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--yellow);
 }
 
 /* ─── RESPONSIVE ─── */
