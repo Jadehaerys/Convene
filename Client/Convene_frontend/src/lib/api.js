@@ -1,4 +1,11 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
+const AUTH_USER_FETCHED_AT_KEY = 'auth_user_fetched_at';
+const USER_CACHE_TTL_MS = 60 * 1000;
+const GET_RESPONSE_CACHE_TTL_MS = 2 * 1000;
+
+let inFlightUserRequest = null;
+const inFlightGetRequests = new Map();
+const getResponseCache = new Map();
 
 function getToken() {
   return localStorage.getItem('auth_token');
@@ -21,26 +28,62 @@ function buildHeaders(extraHeaders = {}, authenticated = true) {
 }
 
 async function request(path, options = {}, authenticated = true) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: buildHeaders(options.headers, authenticated),
-  });
+  const method = (options.method || 'GET').toUpperCase();
+  const headers = buildHeaders(options.headers, authenticated);
+  const url = `${API_BASE}${path}`;
+  const requestKey = method === 'GET' ? `${url}::${JSON.stringify(headers)}` : null;
 
-  let data = null;
+  if (requestKey) {
+    const cached = getResponseCache.get(requestKey);
+    const isFresh = cached && (Date.now() - cached.timestamp < GET_RESPONSE_CACHE_TTL_MS);
+    if (isFresh) {
+      return cached.data;
+    }
+  }
+
+  if (requestKey && inFlightGetRequests.has(requestKey)) {
+    return inFlightGetRequests.get(requestKey);
+  }
+
+  const runRequest = (async () => {
+    const response = await fetch(url, {
+      ...options,
+      method,
+      headers,
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      const error = new Error(data?.message || 'Request failed');
+      error.status = response.status;
+      error.payload = data;
+      throw error;
+    }
+
+    if (requestKey) {
+      getResponseCache.set(requestKey, { data, timestamp: Date.now() });
+    }
+
+    return data;
+  })();
+
+  if (requestKey) {
+    inFlightGetRequests.set(requestKey, runRequest);
+  }
+
   try {
-    data = await response.json();
-  } catch {
-    data = null;
+    return await runRequest;
+  } finally {
+    if (requestKey) {
+      inFlightGetRequests.delete(requestKey);
+    }
   }
-
-  if (!response.ok) {
-    const error = new Error(data?.message || 'Request failed');
-    error.status = response.status;
-    error.payload = data;
-    throw error;
-  }
-
-  return data;
 }
 
 export function getStoredUser() {
@@ -60,12 +103,47 @@ export function storeAuthSession({ user, access_token: accessToken, token }) {
 
   if (user) {
     localStorage.setItem('auth_user', JSON.stringify(user));
+    localStorage.setItem(AUTH_USER_FETCHED_AT_KEY, String(Date.now()));
   }
 }
 
 export function clearAuthSession() {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
+  localStorage.removeItem(AUTH_USER_FETCHED_AT_KEY);
+  inFlightUserRequest = null;
+  inFlightGetRequests.clear();
+  getResponseCache.clear();
+}
+
+export async function getCurrentUser({ force = false } = {}) {
+  const token = getToken();
+  if (!token) {
+    return null;
+  }
+
+  const storedUser = getStoredUser();
+  const fetchedAt = Number(localStorage.getItem(AUTH_USER_FETCHED_AT_KEY) || 0);
+  const isCacheFresh = storedUser && fetchedAt && (Date.now() - fetchedAt < USER_CACHE_TTL_MS);
+
+  if (!force && isCacheFresh) {
+    return storedUser;
+  }
+
+  if (!force && inFlightUserRequest) {
+    return inFlightUserRequest;
+  }
+
+  inFlightUserRequest = request('/api/user')
+    .then((user) => {
+      storeAuthSession({ user });
+      return user;
+    })
+    .finally(() => {
+      inFlightUserRequest = null;
+    });
+
+  return inFlightUserRequest;
 }
 
 export function login(payload) {
