@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './styles/globals.css';
 import Landing from './pages/Landing';
@@ -35,7 +35,7 @@ export default function App() {
     document.title = 'Convene';
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       if (localStorage.getItem('auth_token')) {
         await logout();
@@ -46,7 +46,7 @@ export default function App() {
 
     clearAuthSession();
     navigate('/');
-  };
+  }, [navigate]);
 
   return (
     <Routes>

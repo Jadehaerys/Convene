@@ -15,6 +15,7 @@ import {
   XIcon,
 } from './Icons';
 import { getInitials } from '../../data/mockData';
+import { getCurrentUser } from '../../lib/api';
 import './DashboardShell.css';
 
 const NAV_ITEMS = [
@@ -84,42 +85,42 @@ export default function DashboardShell({ title, subtitle, onLogout, role = 'stud
   }, [chatMessages, isChatLoading, isChatOpen]);
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
+    if (user) {
       return;
     }
 
-    const base = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    let isMounted = true;
 
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${base}/api/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-          },
-        });
+        const userData = await getCurrentUser();
 
-        if (!response.ok) {
-          if (response.status === 401) {
-            onLogout?.();
-            return;
-          }
-
-          setUserFetchError('Could not load your profile right now.');
+        if (!isMounted || !userData) {
           return;
         }
 
-        const userData = await response.json();
         setUser(userData);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
-      } catch {
+        setUserFetchError('');
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        if (error.status === 401) {
+          onLogout?.();
+          return;
+        }
+
         setUserFetchError('Could not load your profile right now.');
       }
     };
 
     fetchUser();
-  }, [onLogout]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [onLogout, user]);
 
   const handleChatSubmit = async (event) => {
     event.preventDefault();
@@ -146,7 +147,7 @@ export default function DashboardShell({ title, subtitle, onLogout, role = 'stud
         throw new Error('Not authenticated');
       }
 
-      const base = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const base = import.meta.env.VITE_API_URL ?? '';
       const response = await fetch(`${base}/api/chat`, {
         method: 'POST',
         headers: {
