@@ -4,13 +4,18 @@ import DashboardShell from '../components/shared/DashboardShell';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import {
+  BrainIcon,
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
   CopyIcon,
-  MessageSquareIcon,
+  MicIcon,
+  PenLineIcon,
   SendIcon,
+  SparklesIcon,
   UsersIcon,
+  VideoIcon,
+  VideoOffIcon,
 } from '../components/shared/Icons';
 import { getConsultationSession, joinConsultationSession, saveConsultationNotes } from '../lib/api';
 import './Portal.css';
@@ -23,10 +28,23 @@ export default function ConsultationRoom({ onLogout }) {
   const [meetingState, setMeetingState] = useState('Connecting room');
   const [notes, setNotes] = useState('');
   const [noteStatus, setNoteStatus] = useState('');
+  const [unsavedNotes, setUnsavedNotes] = useState(false);
   const [draftMessage, setDraftMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [aiTyping, setAiTyping] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [cameraOn, setCameraOn] = useState(true);
+  const [micOn, setMicOn] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const AI_SUGGESTIONS = [
+    'Summarize the session so far',
+    'Clarify the last concept',
+    "What's my next step?",
+    'Give me a practice problem',
+  ];
 
   useEffect(() => {
     let isMounted = true;
@@ -73,10 +91,44 @@ export default function ConsultationRoom({ onLogout }) {
     };
   }, [onLogout, sessionId]);
 
+  useEffect(() => {
+    if (!isRecording) return;
+    const interval = window.setInterval(() => {
+      setRecordingSeconds((prev) => prev + 1);
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [isRecording]);
+
+  useEffect(() => {
+    if (!unsavedNotes) return;
+    const timer = window.setTimeout(() => {
+      saveConsultationNotes(sessionId, notes).then(() => {
+        setNoteStatus('Auto-saved');
+        setUnsavedNotes(false);
+        window.setTimeout(() => setNoteStatus(''), 1800);
+      }).catch(() => {});
+    }, 2500);
+    return () => window.clearTimeout(timer);
+  }, [unsavedNotes, notes, sessionId]);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const handleToggleRecording = () => {
+    setIsRecording((prev) => {
+      if (prev) setRecordingSeconds(0);
+      return !prev;
+    });
+  };
+
   const handleSaveNotes = async () => {
     try {
       await saveConsultationNotes(sessionId, notes);
       setNoteStatus('Notes saved');
+      setUnsavedNotes(false);
       window.setTimeout(() => setNoteStatus(''), 1800);
     } catch (requestError) {
       if (requestError.status === 401) {
@@ -95,16 +147,26 @@ export default function ConsultationRoom({ onLogout }) {
       return;
     }
 
-    setChatMessages((previous) => [
-      ...previous,
-      { id: `user-${Date.now()}`, sender: 'You', text: trimmed },
-      {
-        id: `assistant-${Date.now() + 1}`,
-        sender: room?.tutorName || 'Tutor',
-        text: 'Acknowledged. Keep that point in the notes panel so it appears in the post-session summary.',
-      },
-    ]);
+    const userMsg = { id: `user-${Date.now()}`, sender: 'You', text: trimmed };
+    setChatMessages((previous) => [...previous, userMsg]);
     setDraftMessage('');
+    setAiTyping(true);
+
+    window.setTimeout(() => {
+      setAiTyping(false);
+      setChatMessages((previous) => [
+        ...previous,
+        {
+          id: `assistant-${Date.now() + 1}`,
+          sender: room?.tutorName || 'AI Assistant',
+          text: 'Acknowledged. Keep that point in the notes panel so it appears in the post-session summary.',
+        },
+      ]);
+    }, 1400);
+  };
+
+  const handleSuggestion = (text) => {
+    setDraftMessage(text);
   };
 
   const handleCopyRoomCode = async () => {
@@ -158,6 +220,12 @@ export default function ConsultationRoom({ onLogout }) {
                   <div className="consultation-stage__label">Main speaker</div>
                   <strong>{room.tutorName}</strong>
                   <span>{room.subject}</span>
+                  {isRecording && (
+                    <div className="consultation-rec-badge">
+                      <span className="consultation-rec-badge__dot" />
+                      REC {formatTime(recordingSeconds)}
+                    </div>
+                  )}
                 </div>
                 <div className="consultation-stage__row">
                   <div className="consultation-stage__feed">
@@ -170,6 +238,38 @@ export default function ConsultationRoom({ onLogout }) {
                     <strong>{room.status}</strong>
                     <span>{room.summaryReady ? 'Summary can be generated immediately' : 'Summary will be created after the call'}</span>
                   </div>
+                </div>
+
+                <div className="consultation-controls">
+                  <button
+                    type="button"
+                    className={`consultation-control-btn ${micOn ? '' : 'consultation-control-btn--off'}`}
+                    onClick={() => setMicOn((p) => !p)}
+                    aria-label={micOn ? 'Mute microphone' : 'Unmute microphone'}
+                  >
+                    <MicIcon size={16} />
+                    <span>{micOn ? 'Mic on' : 'Muted'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`consultation-control-btn ${cameraOn ? '' : 'consultation-control-btn--off'}`}
+                    onClick={() => setCameraOn((p) => !p)}
+                    aria-label={cameraOn ? 'Turn off camera' : 'Turn on camera'}
+                  >
+                    {cameraOn ? <VideoIcon size={16} /> : <VideoOffIcon size={16} />}
+                    <span>{cameraOn ? 'Camera on' : 'Camera off'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`consultation-control-btn consultation-control-btn--record ${isRecording ? 'consultation-control-btn--recording' : ''}`}
+                    onClick={handleToggleRecording}
+                    aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+                  >
+                    <span className="consultation-control-btn__rec-dot" />
+                    <span>{isRecording ? `Stop · ${formatTime(recordingSeconds)}` : 'Record session'}</span>
+                  </button>
                 </div>
               </div>
 
@@ -206,40 +306,66 @@ export default function ConsultationRoom({ onLogout }) {
             <section className="consultation-workspace">
               <div className="consultation-panel consultation-panel--notes">
                 <div className="consultation-panel__header">
-                  <h3>Live consultation notes</h3>
+                  <div className="consultation-panel__header-left">
+                    <PenLineIcon size={15} />
+                    <h3>Real-time notes</h3>
+                    {unsavedNotes && <span className="consultation-notes-pulse" title="Unsaved changes" />}
+                  </div>
                   {noteStatus && <span className="consultation-status">{noteStatus}</span>}
                 </div>
                 <textarea
                   className="consultation-notes"
                   value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                  placeholder="Capture explanations, worked examples, and next-step recommendations here."
+                  onChange={(event) => { setNotes(event.target.value); setUnsavedNotes(true); setNoteStatus(''); }}
+                  placeholder="Capture explanations, worked examples, and next-step recommendations here. Notes auto-save after 2.5 seconds."
                 />
                 <div className="consultation-panel__footer">
+                  <span className="consultation-notes-count">{notes.length} chars</span>
                   <Button variant="primary" size="sm" onClick={handleSaveNotes}>Save notes</Button>
                 </div>
               </div>
 
               <div className="consultation-panel consultation-panel--chat">
                 <div className="consultation-panel__header">
-                  <h3>In-session chat</h3>
-                  <MessageSquareIcon size={15} />
+                  <div className="consultation-panel__header-left">
+                    <BrainIcon size={15} />
+                    <h3>AI Assistant</h3>
+                  </div>
+                  <SparklesIcon size={15} />
                 </div>
+
+                <div className="consultation-chat__suggestions">
+                  {AI_SUGGESTIONS.map((s) => (
+                    <button key={s} type="button" className="consultation-chat__chip" onClick={() => handleSuggestion(s)}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="consultation-chat">
                   {chatMessages.map((message) => (
-                    <div className="consultation-chat__item" key={message.id}>
+                    <div className={`consultation-chat__item ${message.sender === 'You' ? 'consultation-chat__item--user' : ''}`} key={message.id}>
                       <strong>{message.sender}</strong>
                       <p>{message.text}</p>
                     </div>
                   ))}
+                  {aiTyping && (
+                    <div className="consultation-chat__item consultation-chat__item--typing">
+                      <strong>AI Assistant</strong>
+                      <span className="consultation-chat__typing-dots">
+                        <span /><span /><span />
+                      </span>
+                    </div>
+                  )}
                 </div>
+
                 <form className="consultation-chat__form" onSubmit={handleSendMessage}>
                   <input
                     value={draftMessage}
                     onChange={(event) => setDraftMessage(event.target.value)}
-                    placeholder="Share a question or note for the consultation"
+                    placeholder="Ask the AI assistant anything about this session"
                   />
-                  <button type="submit" aria-label="Send consultation chat message">
+                  <button type="submit" aria-label="Send to AI assistant">
                     <SendIcon size={14} />
                   </button>
                 </form>

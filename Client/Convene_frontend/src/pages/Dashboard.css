@@ -270,3 +270,116 @@
     gap: 16px;
   }
 }
+
+/* ─── RECOMMENDER SYSTEM ─── */
+.overview-recommender-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(21,18,28,0.82) 0%, rgba(13,12,17,0.94) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-xl);
+}
+
+.overview-recommender-card__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overview-rec-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.overview-rec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.overview-rec-item:hover {
+  border-color: rgba(245, 158, 11, 0.22);
+  background: rgba(245, 158, 11, 0.04);
+  transform: translateY(-2px);
+}
+
+.overview-rec-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.overview-rec-item__match {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.overview-rec-item__score {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--yellow);
+  line-height: 1;
+}
+
+.overview-rec-item__match-label {
+  color: var(--ink-400);
+  font-size: 0.72rem;
+}
+
+.overview-rec-item__name {
+  color: var(--white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.overview-rec-item__subject {
+  color: var(--ink-300);
+  font-size: 0.78rem;
+}
+
+.overview-rec-item__reason {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 5px 10px;
+  border-radius: var(--r-full);
+  background: rgba(245, 158, 11, 0.07);
+  border: 1px solid rgba(245, 158, 11, 0.14);
+  color: var(--yellow-light);
+  font-size: 0.73rem;
+}
+
+.overview-rec-item__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.overview-rec-item__price {
+  color: var(--ink-400);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 1080px) {
+  .overview-rec-list {
+    grid-template-columns: 1fr;
+  }
+}
