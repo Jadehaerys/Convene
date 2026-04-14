@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import DashboardShell from '../components/shared/DashboardShell';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
-import { CopyIcon, FileTextIcon, SearchIcon } from '../components/shared/Icons';
+import { CopyIcon, FileTextIcon, SearchIcon, SparklesIcon, WandIcon } from '../components/shared/Icons';
 import { getLearningSummaries } from '../lib/api';
 import './Portal.css';
 
@@ -12,6 +12,7 @@ export default function Summaries({ onLogout }) {
   const [activeId, setActiveId] = useState(null);
   const [copyMessage, setCopyMessage] = useState('');
   const [loadError, setLoadError] = useState('');
+  const [aiGenState, setAiGenState] = useState('idle'); // idle | generating | done
 
   useEffect(() => {
     let isMounted = true;
@@ -65,6 +66,11 @@ export default function Summaries({ onLogout }) {
     } catch {
       setCopyMessage('Clipboard access is unavailable in this browser.');
     }
+  };
+
+  const handleGenerateAI = () => {
+    setAiGenState('generating');
+    window.setTimeout(() => setAiGenState('done'), 2800);
   };
 
   return (
@@ -150,6 +156,57 @@ export default function Summaries({ onLogout }) {
                       {activeSummary.actionItems.map((item) => <li key={item}>{item}</li>)}
                     </ul>
                   </div>
+                </div>
+
+                <div className="summaries-ai-panel">
+                  <div className="summaries-ai-panel__header">
+                    <div className="summaries-ai-panel__heading">
+                      <SparklesIcon size={15} />
+                      <h4>AI Summarized Content</h4>
+                    </div>
+                    {aiGenState === 'idle' && (
+                      <Button variant="primary" size="sm" icon={<WandIcon size={14} />} onClick={handleGenerateAI}>
+                        Generate AI summary
+                      </Button>
+                    )}
+                    {aiGenState === 'generating' && (
+                      <Badge variant="ai" dot>Generating…</Badge>
+                    )}
+                    {aiGenState === 'done' && (
+                      <Badge variant="chain">Summary ready</Badge>
+                    )}
+                  </div>
+
+                  {aiGenState === 'idle' && (
+                    <p className="summaries-ai-panel__hint">
+                      Ask the AI to synthesize this session into a focused concept map, study card set, or annotated outline.
+                    </p>
+                  )}
+
+                  {aiGenState === 'generating' && (
+                    <div className="summaries-ai-panel__progress">
+                      <div className="summaries-ai-panel__progress-bar">
+                        <div className="summaries-ai-panel__progress-fill" />
+                      </div>
+                      <span>Analysing session notes and extracting key concepts…</span>
+                    </div>
+                  )}
+
+                  {aiGenState === 'done' && (
+                    <div className="summaries-ai-panel__output">
+                      <div className="summaries-ai-panel__output-section">
+                        <strong>Concept map highlights</strong>
+                        <ul className="portal-bullet-list">
+                          <li>Core concept: {activeSummary.title}</li>
+                          {activeSummary.tags.map((tag) => <li key={tag}>Related cluster: {tag}</li>)}
+                        </ul>
+                      </div>
+                      <div className="summaries-ai-panel__output-section">
+                        <strong>AI-generated study note</strong>
+                        <p>{activeSummary.overview} Focus your next revision on the action items above and cross-reference with your tutor's worked examples.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             ) : (

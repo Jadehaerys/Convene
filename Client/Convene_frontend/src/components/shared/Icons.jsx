@@ -298,6 +298,95 @@ export function XIcon(props) {
   );
 }
 
+export function BrainIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M9.5 2a2.5 2.5 0 0 1 5 0c1.09.21 2 .91 2.5 1.86A4 4 0 0 1 20 7.5c0 1.09-.44 2.07-1.15 2.78.44.74.65 1.57.65 2.47a5 5 0 0 1-4 4.9V19a2 2 0 0 1-4 0v-1.35a5 5 0 0 1-4-4.9c0-.9.21-1.73.65-2.47A4.01 4.01 0 0 1 4 7.5a4 4 0 0 1 3-3.86C7.5 2.7 8.41 2 9.5 2Z" />
+      <path d="M12 10v4" />
+      <path d="M9.5 12.5h5" />
+    </BaseIcon>
+  );
+}
+
+export function LightbulbIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.4 10.6 18 9.3 18 8a6 6 0 0 0-12 0c0 1.3.6 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5" />
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+    </BaseIcon>
+  );
+}
+
+export function MicIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="9" y="2" width="6" height="11" rx="3" />
+      <path d="M5 10a7 7 0 0 0 14 0" />
+      <path d="M12 19v3" />
+      <path d="M8 22h8" />
+    </BaseIcon>
+  );
+}
+
+export function PenLineIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </BaseIcon>
+  );
+}
+
+export function RadioIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <circle cx="12" cy="12" r="2" />
+      <path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+      <path d="M7.76 7.76a6 6 0 0 0 0 8.49" />
+      <path d="M16.24 7.76a6 6 0 0 1 0 8.49" />
+    </BaseIcon>
+  );
+}
+
+export function VideoIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="m22 8-6 4 6 4V8Z" />
+      <rect x="2" y="6" width="14" height="12" rx="2" />
+    </BaseIcon>
+  );
+}
+
+export function VideoOffIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.25-3.5a.5.5 0 0 1 .75.43v6.54a.5.5 0 0 1-.75.43L16 11.5" />
+      <rect x="2" y="6" width="14" height="12" rx="2" />
+      <line x1="2" y1="2" x2="22" y2="22" />
+    </BaseIcon>
+  );
+}
+
+export function WandIcon(props) {
+  return (
+    <BaseIcon {...props}>
+      <path d="m15 4-1 1" />
+      <path d="M4 15 3 16" />
+      <path d="m7 7-1.5-1.5" />
+      <path d="m13 13 6 6" />
+      <path d="m2 22 10-10" />
+      <path d="M18.5 8.5 20 7" />
+      <path d="m7.5 12.5 1.5 1.5" />
+      <path d="M13.5 6.5 15 5" />
+      <path d="M3 3l18 18" opacity="0" />
+      <path d="m20 4-3.5 3.5" />
+      <path d="m4 20 3.5-3.5" />
+    </BaseIcon>
+  );
+}
+
 export function RatingStars({ value = 5, size = 14, className = '' }) {
   const count = Math.max(0, Math.min(5, Math.round(value)));
 

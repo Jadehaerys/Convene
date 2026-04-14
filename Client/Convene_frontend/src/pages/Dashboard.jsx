@@ -8,12 +8,14 @@ import {
   CalendarIcon,
   CompassIcon,
   FileTextIcon,
+  LightbulbIcon,
   MessageSquareIcon,
   RatingStars,
   SearchIcon,
   SparklesIcon,
 } from '../components/shared/Icons';
 import { getDashboardOverview, getStoredUser } from '../lib/api';
+import { tutorCatalog } from '../data/mockData';
 import './Dashboard.css';
 import './Portal.css';
 
@@ -52,6 +54,18 @@ export default function Dashboard({ role = 'student', onLogout }) {
       isMounted = false;
     };
   }, [onLogout]);
+
+  const MATCH_REASONS = [
+    'Based on your calculus sessions',
+    'Matches your CS project history',
+    'Aligns with recent exam prep notes',
+  ];
+
+  const recommendations = tutorCatalog.slice(0, 3).map((tutor, i) => ({
+    ...tutor,
+    matchScore: 97 - i * 4,
+    reason: MATCH_REASONS[i],
+  }));
 
   const matches = overview.featured_tutors.filter((tutor) => (
     !query || [tutor.name, tutor.subject, tutor.tags.join(' '), tutor.bio].join(' ').toLowerCase().includes(query.toLowerCase())
@@ -193,6 +207,47 @@ export default function Dashboard({ role = 'student', onLogout }) {
               <span>Search help topics and structure support requests cleanly.</span>
             </div>
           </button>
+        </section>
+
+        <section className="overview-recommender-card">
+          <div className="overview-recommender-card__header">
+            <div>
+              <Badge variant="ai" dot>Recommender system</Badge>
+              <h2 className="overview-search-card__title">Matched for your learning path</h2>
+            </div>
+            <Button variant="ghost" size="sm" icon={<ArrowRightIcon size={14} />} iconRight onClick={() => navigate('/dashboard/tutors')}>
+              See all tutors
+            </Button>
+          </div>
+
+          <div className="overview-rec-list">
+            {recommendations.map((rec) => (
+              <button
+                key={rec.id}
+                type="button"
+                className="overview-rec-item"
+                onClick={() => navigate('/dashboard/tutors', { state: { query: rec.subject } })}
+              >
+                <div className="overview-rec-item__top">
+                  <div className="overview-result__avatar">{rec.initials}</div>
+                  <div className="overview-rec-item__match">
+                    <span className="overview-rec-item__score">{rec.matchScore}%</span>
+                    <span className="overview-rec-item__match-label">match</span>
+                  </div>
+                </div>
+                <strong className="overview-rec-item__name">{rec.name}</strong>
+                <span className="overview-rec-item__subject">{rec.subject}</span>
+                <p className="overview-rec-item__reason">
+                  <LightbulbIcon size={12} />
+                  {rec.reason}
+                </p>
+                <div className="overview-rec-item__footer">
+                  <RatingStars value={rec.rating} size={11} className="overview-result__stars" />
+                  <span className="overview-rec-item__price">{rec.price}</span>
+                </div>
+              </button>
+            ))}
+          </div>
         </section>
       </div>
     </DashboardShell>
