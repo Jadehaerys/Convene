@@ -15,12 +15,12 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/chat', [ChatBot::class, 'getResponse']);
+    Route::post('/chat', [ChatBot::class, 'getResponse'])->middleware('throttle:chat');
     Route::get('/dashboard/overview', [DashboardController::class, 'overview']);
     Route::get('/tutors', [TutorController::class, 'index']);
     Route::get('/consultation-sessions', [ConsultationSessionController::class, 'index']);
@@ -32,5 +32,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/consultation-sessions/{consultationSession}/notes', [ConsultationSessionController::class, 'saveNotes']);
     Route::get('/learning-summaries', [LearningSummaryController::class, 'index']);
     Route::get('/support/faqs', [SupportController::class, 'faqs']);
-    Route::post('/support/tickets', [SupportController::class, 'storeTicket']);
+    Route::post('/support/tickets', [SupportController::class, 'storeTicket'])->middleware('throttle:support');
 });

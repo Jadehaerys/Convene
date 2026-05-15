@@ -20,6 +20,10 @@ It covers:
 - Backend: `Server/Convene_backend`
 - Product/flow diagrams: `docs/01-system-architecture.png`, `docs/02-student-journey.png`, `docs/03-tutor-onboarding.png`, `docs/04-postsession-flow.png`
 
+## Planning Follow-up
+
+- Laravel production roadmap, target schema, and API contract: `docs/06-laravel-delivery-roadmap.md`
+
 ## What Was Added Today
 
 ### Frontend
